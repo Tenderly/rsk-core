@@ -33,7 +33,7 @@ import (
 var emptyCodeHash = crypto.Keccak256Hash(nil)
 
 var ErrUnsupportedPrecompile = errors.New("unsupported precompile")
-var unsupportedPrecompiles = map[common.Address]bool{
+var UnsupportedPrecompiles = map[common.Address]bool{
 	common.HexToAddress("0x0000000000000000000000000000000001000006"): true,
 	common.HexToAddress("0x0000000000000000000000000000000001000008"): true,
 	common.HexToAddress("0x0000000000000000000000000000000001000009"): true,
@@ -242,7 +242,7 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 	}
 	snapshot := evm.StateDB.Snapshot()
 
-	if unsupportedPrecompiles[addr] {
+	if UnsupportedPrecompiles[addr] {
 		return nil, gas, ErrUnsupportedPrecompile
 	}
 	p, isPrecompile := evm.precompile(addr)
@@ -325,7 +325,7 @@ func (evm *EVM) CallCode(caller ContractRef, addr common.Address, input []byte, 
 	}
 	var snapshot = evm.StateDB.Snapshot()
 
-	if unsupportedPrecompiles[addr] {
+	if UnsupportedPrecompiles[addr] {
 		return nil, gas, ErrUnsupportedPrecompile
 	}
 	// It is allowed to call precompiles, even via delegatecall
@@ -364,7 +364,7 @@ func (evm *EVM) DelegateCall(caller ContractRef, addr common.Address, input []by
 	}
 	var snapshot = evm.StateDB.Snapshot()
 
-	if unsupportedPrecompiles[addr] {
+	if UnsupportedPrecompiles[addr] {
 		return nil, gas, ErrUnsupportedPrecompile
 	}
 	// It is allowed to call precompiles, even via delegatecall
@@ -412,7 +412,7 @@ func (evm *EVM) StaticCall(caller ContractRef, addr common.Address, input []byte
 	// future scenarios
 	evm.StateDB.AddBalance(addr, big0)
 
-	if unsupportedPrecompiles[addr] {
+	if UnsupportedPrecompiles[addr] {
 		return nil, gas, ErrUnsupportedPrecompile
 	}
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
