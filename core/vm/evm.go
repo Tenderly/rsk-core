@@ -32,6 +32,14 @@ import (
 // deployed contract addresses (relevant after the account abstraction).
 var emptyCodeHash = crypto.Keccak256Hash(nil)
 
+var ErrUnsupportedPrecompile = errors.New("unsupported precompile")
+var unsupportedPrecompiles = map[common.Address]bool{
+	common.HexToAddress("0x0000000000000000000000000000000001000006"): true,
+	common.HexToAddress("0x0000000000000000000000000000000001000008"): true,
+	common.HexToAddress("0x0000000000000000000000000000000001000009"): true,
+	common.HexToAddress("0x0000000000000000000000000000000001000010"): true,
+}
+
 type (
 	// CanTransferFunc is the signature of a transfer guard function
 	CanTransferFunc func(StateDB, common.Address, *big.Int) bool
@@ -233,6 +241,10 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 		return nil, gas, ErrInsufficientBalance
 	}
 	snapshot := evm.StateDB.Snapshot()
+
+	if unsupportedPrecompiles[addr] {
+		return nil, gas, ErrUnsupportedPrecompile
+	}
 	p, isPrecompile := evm.precompile(addr)
 
 	if !evm.StateDB.Exist(addr) {
@@ -313,6 +325,9 @@ func (evm *EVM) CallCode(caller ContractRef, addr common.Address, input []byte, 
 	}
 	var snapshot = evm.StateDB.Snapshot()
 
+	if unsupportedPrecompiles[addr] {
+		return nil, gas, ErrUnsupportedPrecompile
+	}
 	// It is allowed to call precompiles, even via delegatecall
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
 		ret, gas, err = RunPrecompiledContract(p, input, gas)
@@ -349,6 +364,9 @@ func (evm *EVM) DelegateCall(caller ContractRef, addr common.Address, input []by
 	}
 	var snapshot = evm.StateDB.Snapshot()
 
+	if unsupportedPrecompiles[addr] {
+		return nil, gas, ErrUnsupportedPrecompile
+	}
 	// It is allowed to call precompiles, even via delegatecall
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
 		ret, gas, err = RunPrecompiledContract(p, input, gas)
@@ -394,6 +412,9 @@ func (evm *EVM) StaticCall(caller ContractRef, addr common.Address, input []byte
 	// future scenarios
 	evm.StateDB.AddBalance(addr, big0)
 
+	if unsupportedPrecompiles[addr] {
+		return nil, gas, ErrUnsupportedPrecompile
+	}
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
 		ret, gas, err = RunPrecompiledContract(p, input, gas)
 	} else {
