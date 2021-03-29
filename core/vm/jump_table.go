@@ -120,6 +120,11 @@ func newConstantinopleInstructionSet() JumpTable {
 		writes:      true,
 		returns:     true,
 	}
+
+	enable1344(&instructionSet) // ChainID opcode - https://eips.ethereum.org/EIPS/eip-1344
+	enable1884(&instructionSet) // Reprice reader opcodes - https://eips.ethereum.org/EIPS/eip-1884
+	enable2200(&instructionSet) // Net metered SSTORE - https://eips.ethereum.org/EIPS/eip-2200
+
 	return instructionSet
 }
 
