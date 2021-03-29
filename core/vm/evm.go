@@ -241,10 +241,6 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 		return nil, gas, ErrInsufficientBalance
 	}
 	snapshot := evm.StateDB.Snapshot()
-
-	if UnsupportedPrecompiles[addr] {
-		return nil, gas, ErrUnsupportedPrecompile
-	}
 	p, isPrecompile := evm.precompile(addr)
 
 	if !evm.StateDB.Exist(addr) {
@@ -325,9 +321,6 @@ func (evm *EVM) CallCode(caller ContractRef, addr common.Address, input []byte, 
 	}
 	var snapshot = evm.StateDB.Snapshot()
 
-	if UnsupportedPrecompiles[addr] {
-		return nil, gas, ErrUnsupportedPrecompile
-	}
 	// It is allowed to call precompiles, even via delegatecall
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
 		ret, gas, err = RunPrecompiledContract(p, input, gas)
@@ -364,9 +357,6 @@ func (evm *EVM) DelegateCall(caller ContractRef, addr common.Address, input []by
 	}
 	var snapshot = evm.StateDB.Snapshot()
 
-	if UnsupportedPrecompiles[addr] {
-		return nil, gas, ErrUnsupportedPrecompile
-	}
 	// It is allowed to call precompiles, even via delegatecall
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
 		ret, gas, err = RunPrecompiledContract(p, input, gas)
@@ -412,9 +402,6 @@ func (evm *EVM) StaticCall(caller ContractRef, addr common.Address, input []byte
 	// future scenarios
 	evm.StateDB.AddBalance(addr, big0)
 
-	if UnsupportedPrecompiles[addr] {
-		return nil, gas, ErrUnsupportedPrecompile
-	}
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
 		ret, gas, err = RunPrecompiledContract(p, input, gas)
 	} else {
