@@ -32,10 +32,7 @@ const (
 )
 
 // callGas returns the actual gas cost of the call.
-//
-// The cost of gas was changed during the homestead price change HF.
-// As part of EIP 150 (TangerineWhistle), the returned gas is gas - base * 63 / 64.
-func callGas(isEip150 bool, availableGas, base uint64, callCost *uint256.Int) (uint64, error) {
+func callGas(isEip150 bool, availableGas, base uint64, callCost *uint256.Int, transferValue bool) (uint64, error) {
 	if isEip150 {
 		availableGas = availableGas - base
 		gas := availableGas
@@ -43,6 +40,9 @@ func callGas(isEip150 bool, availableGas, base uint64, callCost *uint256.Int) (u
 		// is smaller than the requested amount. Therefore we return the new gas instead
 		// of returning an error.
 		if !callCost.IsUint64() || gas < callCost.Uint64() {
+			if transferValue && params.CallStipend > gas {
+				return params.CallStipend, nil
+			}
 			return gas, nil
 		}
 	}
