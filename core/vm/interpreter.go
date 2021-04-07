@@ -279,11 +279,21 @@ func (in *EVMInterpreter) Run(contract *Contract, input []byte, readOnly bool) (
 			logged = true
 		}
 
+		// used as indicator for return data invalidation
+		// this is super hacky but it'll keep the consensus
+		var codeLen int
+		if op == CALL || op == CALLCODE || op == DELEGATECALL || op == STATICCALL {
+			_, ok := in.evm.precompile(stack.Back(1).Bytes20())
+			if !ok {
+				codeLen = len(in.evm.StateDB.GetCode(stack.Back(1).Bytes20()))
+			}
+		}
+
 		// execute the operation
 		res, err = operation.execute(&pc, in, callContext)
 		// if the operation clears the return data (e.g. it has returning data)
 		// set the last return to the result of the operation.
-		if operation.returns {
+		if operation.returns && (in.evm.chainRules.IsBerlin || codeLen != 0) {
 			in.returnData = common.CopyBytes(res)
 		}
 
