@@ -187,13 +187,6 @@ func (mgp minGasPrice) run(header *types.Header, arguments ...[]byte) ([]byte, e
 	return mgp.method.Outputs.Pack(minGasPrice)
 }
 
-// we really don't want to change header structure
-// therefore we'll encode minGasPrice to extraData parameter
-//func (bh blockHeader) getMinGasPrice(header *types.Header, arguments ...[]byte) ([]byte, error) {
-//	size := getUncleCoinbaseAddressSizeTotal(header.Extra)
-//	return header.Extra[len(header.Extra)-size-33 : len(header.Extra)-size-1], nil
-//}
-
 type uncleCoinbaseAddress struct {
 	method abi.Method
 }
@@ -221,30 +214,6 @@ func (uca uncleCoinbaseAddress) run(header *types.Header, arguments ...[]byte) (
 
 	return uca.method.Outputs.Pack(hash)
 }
-
-// we really don't want to change header structure
-// therefore we'll encode uncleCoinbaseAddress to extraData parameter
-//func (bh blockHeader) getUncleCoinbaseAddress(header *types.Header, arguments ...[]byte) ([]byte, error) {
-//	if len(arguments) != 1 && len(arguments[0]) != 32 {
-//		return nil, errBlockHeaderInvalidInput
-//	}
-//
-//	index := int(binary.LittleEndian.Uint64(arguments[0]))
-//	size := getUncleCoinbaseAddressSize(header.Extra)
-//
-//	if index < 0 || index > size {
-//		return nil, errBlockHeaderInvalidInput
-//	}
-//
-//	hash := header.Extra[len(header.Extra)-index*32-41 : len(header.Extra)-index*32-1]
-//
-//	header = bh.getHeader(common.BytesToHash(hash), 0)
-//	if header == nil {
-//		return nil, errBlockHeaderInvalidInput
-//	}
-//
-//	return header.Coinbase.Bytes(), nil
-//}
 
 func getMergedMiningTagsTotalSize(data []byte) int {
 	mergedMiningTagsSize := getMergedMiningTagsSize(data)
