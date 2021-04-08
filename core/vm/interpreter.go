@@ -283,8 +283,9 @@ func (in *EVMInterpreter) Run(contract *Contract, input []byte, readOnly bool) (
 		// this is super hacky but it'll keep the consensus
 		var codeLen int
 		if op == CALL || op == CALLCODE || op == DELEGATECALL || op == STATICCALL {
-			_, ok := in.evm.precompile(stack.Back(1).Bytes20())
-			if !ok {
+			if _, ok := in.evm.precompile(stack.Back(1).Bytes20()); ok {
+				codeLen = math.MaxInt32
+			} else {
 				codeLen = len(in.evm.StateDB.GetCode(stack.Back(1).Bytes20()))
 			}
 		}

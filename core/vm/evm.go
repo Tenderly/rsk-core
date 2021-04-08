@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/holiman/uint256"
 	"github.com/tenderly/rsk-core/crypto"
@@ -45,6 +46,9 @@ type (
 	// GetHashFunc returns the n'th block hash in the blockchain
 	// and is used by the BLOCKHASH EVM op code.
 	GetHashFunc func(uint64) common.Hash
+	// GetHeaderFunc returns the block header in the blockchain
+	// and is used by the BlockHeader precompiled.
+	GetHeaderFunc func(common.Hash, uint64) *types.Header
 )
 
 // ActivePrecompiles returns the addresses of the precompiles enabled with the current
@@ -71,6 +75,8 @@ func (evm *EVM) precompile(addr common.Address) (PrecompiledContract, bool) {
 		precompiles = PrecompiledContractsIstanbul
 	case evm.chainRules.IsByzantium:
 		precompiles = PrecompiledContractsByzantium
+		precompiles[common.BytesToAddress([]byte{1, 0, 0, 9})] = newHDWalletUtils()
+		precompiles[common.BytesToAddress([]byte{1, 0, 0, 16})] = newBlockHeader(evm.Context)
 	default:
 		precompiles = PrecompiledContractsHomestead
 	}
@@ -106,6 +112,8 @@ type BlockContext struct {
 	Transfer TransferFunc
 	// GetHash returns the hash corresponding to n
 	GetHash GetHashFunc
+	// GetHash returns the header corresponding to n
+	GetHeader GetHeaderFunc
 
 	// Block information
 	Coinbase    common.Address // Provides information for COINBASE
