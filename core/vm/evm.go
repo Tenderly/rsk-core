@@ -75,8 +75,13 @@ func (evm *EVM) precompile(addr common.Address) (PrecompiledContract, bool) {
 		precompiles = PrecompiledContractsIstanbul
 	case evm.chainRules.IsByzantium:
 		precompiles = PrecompiledContractsByzantium
-		precompiles[common.BytesToAddress([]byte{1, 0, 0, 9})] = newHDWalletUtils()
-		precompiles[common.BytesToAddress([]byte{1, 0, 0, 16})] = newBlockHeader(evm.Context)
+		// Prevent concurrent map write
+		if common.BytesToAddress([]byte{1, 0, 0, 9}) == addr {
+			return newHDWalletUtils(), true
+		}
+		if common.BytesToAddress([]byte{1, 0, 0, 16}) == addr {
+			return newBlockHeader(evm.Context), true
+		}
 	default:
 		precompiles = PrecompiledContractsHomestead
 	}
