@@ -36,6 +36,7 @@ var emptyCodeHash = crypto.Keccak256Hash(nil)
 var ErrUnsupportedPrecompile = errors.New("unsupported precompile")
 var UnsupportedPrecompiles = map[common.Address]bool{
 	common.HexToAddress("0x0000000000000000000000000000000001000006"): true,
+	common.HexToAddress("0x0000000000000000000000000000000001000008"): true,
 }
 
 type (
