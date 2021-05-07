@@ -13,7 +13,7 @@ require (
 	github.com/docker/docker v1.4.2-0.20180625184442-8e610b2b55bf
 	github.com/dop251/goja v0.0.0-20200721192441-a695b0cdd498
 	github.com/edsrzf/mmap-go v1.0.0
-	github.com/ethereum/go-ethereum v1.10.3
+	github.com/ethereum/go-ethereum v1.10.2
 	github.com/fatih/color v1.7.0
 	github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5
 	github.com/golang/snappy v0.0.3-0.20201103224600-674baa8c7fc3
