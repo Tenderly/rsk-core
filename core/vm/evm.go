@@ -37,6 +37,8 @@ var ErrUnsupportedPrecompile = errors.New("unsupported precompile")
 var UnsupportedPrecompiles = map[common.Address]bool{
 	common.HexToAddress("0x0000000000000000000000000000000001000006"): true,
 	common.HexToAddress("0x0000000000000000000000000000000001000008"): true,
+	common.HexToAddress("0x0000000000000000000000000000000001000009"): true,
+	common.HexToAddress("0x0000000000000000000000000000000001000010"): true,
 }
 
 type (
@@ -77,12 +79,12 @@ func (evm *EVM) precompile(addr common.Address) (PrecompiledContract, bool) {
 	case evm.chainRules.IsByzantium:
 		precompiles = PrecompiledContractsByzantium
 		// Prevent concurrent map write
-		if common.BytesToAddress([]byte{1, 0, 0, 9}) == addr {
-			return newHDWalletUtils(), true
-		}
-		if common.BytesToAddress([]byte{1, 0, 0, 16}) == addr {
-			return newBlockHeader(evm.Context), true
-		}
+		//if common.BytesToAddress([]byte{1, 0, 0, 9}) == addr {
+		//	return newHDWalletUtils(), true
+		//}
+		//if common.BytesToAddress([]byte{1, 0, 0, 16}) == addr {
+		//	return newBlockHeader(evm.Context), true
+		//}
 	default:
 		precompiles = PrecompiledContractsHomestead
 	}

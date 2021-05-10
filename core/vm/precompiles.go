@@ -92,7 +92,7 @@ func (bh blockHeader) Run(input []byte) ([]byte, error) {
 		return nil, errBlockHeaderInvalidBlockDepth
 	}
 
-	number := bh.blockNumber - blockDepth.Uint64() - 1
+	number := blockDepth.Uint64()
 	hash := bh.getHash(number)
 
 	header := bh.getHeader(hash, number)
