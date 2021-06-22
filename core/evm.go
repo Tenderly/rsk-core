@@ -20,8 +20,8 @@ import (
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/tenderly/rsk-core/consensus"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/tenderly/rsk-core/consensus"
 	"github.com/tenderly/rsk-core/core/vm"
 )
 
@@ -48,6 +48,7 @@ func NewEVMBlockContext(header *types.Header, chain ChainContext, author *common
 		CanTransfer: CanTransfer,
 		Transfer:    Transfer,
 		GetHash:     GetHashFn(header, chain),
+		GetHeader:   chain.GetHeader,
 		Coinbase:    beneficiary,
 		BlockNumber: new(big.Int).Set(header.Number),
 		Time:        new(big.Int).SetUint64(header.Time),
