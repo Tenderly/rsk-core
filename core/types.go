@@ -17,8 +17,8 @@
 package core
 
 import (
-	"github.com/tenderly/rsk-core/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/tenderly/rsk-core/core/state"
 	"github.com/tenderly/rsk-core/core/vm"
 )
 

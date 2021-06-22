@@ -19,17 +19,19 @@ package snap
 import (
 	"bytes"
 	"fmt"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/light"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/metrics"
 	"github.com/ethereum/go-ethereum/p2p"
 	"github.com/ethereum/go-ethereum/p2p/enode"
 	"github.com/ethereum/go-ethereum/p2p/enr"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/trie"
 	"github.com/tenderly/rsk-core/core"
 	"github.com/tenderly/rsk-core/core/state"
-	"github.com/tenderly/rsk-core/rlp"
 )
 
 const (
@@ -48,6 +50,11 @@ const (
 	// maxTrieNodeLookups is the maximum number of state trie nodes to serve. This
 	// number is there to limit the number of disk lookups.
 	maxTrieNodeLookups = 1024
+
+	// maxTrieNodeTimeSpent is the maximum time we should spend on looking up trie nodes.
+	// If we spend too much time, then it's a fairly high chance of timing out
+	// at the remote side, which means all the work is in vain.
+	maxTrieNodeTimeSpent = 5 * time.Second
 )
 
 // Handler is a callback to invoke from an outside runner after the boilerplate
@@ -77,6 +84,12 @@ type Backend interface {
 
 // MakeProtocols constructs the P2P protocol definitions for `snap`.
 func MakeProtocols(backend Backend, dnsdisc enode.Iterator) []p2p.Protocol {
+	// Filter the discovery iterator for nodes advertising snap support.
+	dnsdisc = enode.Filter(dnsdisc, func(n *enode.Node) bool {
+		var snap enrEntry
+		return n.Load(&snap) == nil
+	})
+
 	protocols := make([]p2p.Protocol, len(ProtocolVersions))
 	for i, version := range ProtocolVersions {
 		version := version // Closure
@@ -127,7 +140,19 @@ func handleMessage(backend Backend, peer *Peer) error {
 		return fmt.Errorf("%w: %v > %v", errMsgTooLarge, msg.Size, maxMessageSize)
 	}
 	defer msg.Discard()
-
+	start := time.Now()
+	// Track the emount of time it takes to serve the request and run the handler
+	if metrics.Enabled {
+		h := fmt.Sprintf("%s/%s/%d/%#02x", p2p.HandleHistName, ProtocolName, peer.Version(), msg.Code)
+		defer func(start time.Time) {
+			sampler := func() metrics.Sample {
+				return metrics.ResettingSample(
+					metrics.NewExpDecaySample(1028, 0.015),
+				)
+			}
+			metrics.GetOrRegisterHistogramLazy(h, nil, sampler).Update(time.Since(start).Microseconds())
+		}(start)
+	}
 	// Handle the message depending on its contents
 	switch {
 	case msg.Code == GetAccountRangeMsg:
@@ -208,6 +233,8 @@ func handleMessage(backend Backend, peer *Peer) error {
 				return fmt.Errorf("accounts not monotonically increasing: #%d [%x] vs #%d [%x]", i-1, res.Accounts[i-1].Hash[:], i, res.Accounts[i].Hash[:])
 			}
 		}
+		requestTracker.Fulfil(peer.id, peer.version, AccountRangeMsg, res.ID)
+
 		return backend.Handle(peer, res)
 
 	case msg.Code == GetStorageRangesMsg:
@@ -333,7 +360,7 @@ func handleMessage(backend Backend, peer *Peer) error {
 		if err := msg.Decode(res); err != nil {
 			return fmt.Errorf("%w: message %v: %v", errDecode, msg, err)
 		}
-		// Ensure the ranges ae monotonically increasing
+		// Ensure the ranges are monotonically increasing
 		for i, slots := range res.Slots {
 			for j := 1; j < len(slots); j++ {
 				if bytes.Compare(slots[j-1].Hash[:], slots[j].Hash[:]) >= 0 {
@@ -341,6 +368,8 @@ func handleMessage(backend Backend, peer *Peer) error {
 				}
 			}
 		}
+		requestTracker.Fulfil(peer.id, peer.version, StorageRangesMsg, res.ID)
+
 		return backend.Handle(peer, res)
 
 	case msg.Code == GetByteCodesMsg:
@@ -385,6 +414,8 @@ func handleMessage(backend Backend, peer *Peer) error {
 		if err := msg.Decode(res); err != nil {
 			return fmt.Errorf("%w: message %v: %v", errDecode, msg, err)
 		}
+		requestTracker.Fulfil(peer.id, peer.version, ByteCodesMsg, res.ID)
+
 		return backend.Handle(peer, res)
 
 	case msg.Code == GetTrieNodesMsg:
@@ -456,13 +487,13 @@ func handleMessage(backend Backend, peer *Peer) error {
 					bytes += uint64(len(blob))
 
 					// Sanity check limits to avoid DoS on the store trie loads
-					if bytes > req.Bytes || loads > maxTrieNodeLookups {
+					if bytes > req.Bytes || loads > maxTrieNodeLookups || time.Since(start) > maxTrieNodeTimeSpent {
 						break
 					}
 				}
 			}
 			// Abort request processing if we've exceeded our limits
-			if bytes > req.Bytes || loads > maxTrieNodeLookups {
+			if bytes > req.Bytes || loads > maxTrieNodeLookups || time.Since(start) > maxTrieNodeTimeSpent {
 				break
 			}
 		}
@@ -478,6 +509,8 @@ func handleMessage(backend Backend, peer *Peer) error {
 		if err := msg.Decode(res); err != nil {
 			return fmt.Errorf("%w: message %v: %v", errDecode, msg, err)
 		}
+		requestTracker.Fulfil(peer.id, peer.version, TrieNodesMsg, res.ID)
+
 		return backend.Handle(peer, res)
 
 	default:

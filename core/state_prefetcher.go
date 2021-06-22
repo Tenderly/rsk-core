@@ -19,11 +19,11 @@ package core
 import (
 	"sync/atomic"
 
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/params"
 	"github.com/tenderly/rsk-core/consensus"
 	"github.com/tenderly/rsk-core/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/tenderly/rsk-core/core/vm"
-	"github.com/ethereum/go-ethereum/params"
 )
 
 // statePrefetcher is a basic Prefetcher, which blindly executes a block on top
@@ -63,7 +63,7 @@ func (p *statePrefetcher) Prefetch(block *types.Block, statedb *state.StateDB, c
 			return
 		}
 		// Convert the transaction into an executable message and pre-cache its sender
-		msg, err := tx.AsMessage(signer)
+		msg, err := tx.AsMessage(signer, header.BaseFee)
 		if err != nil {
 			return // Also invalid block, bail out
 		}

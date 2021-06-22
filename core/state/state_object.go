@@ -25,8 +25,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/metrics"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/tenderly/rsk-core/crypto"
-	"github.com/tenderly/rsk-core/rlp"
 )
 
 var emptyCodeHash = crypto.Keccak256(nil)

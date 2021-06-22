@@ -27,8 +27,8 @@ import (
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/tenderly/rsk-core/crypto"
-	"github.com/tenderly/rsk-core/rlp"
 )
 
 // ReadCanonicalHash retrieves the hash assigned to a canonical block number.
@@ -839,7 +839,7 @@ func ReadHeadHeader(db ethdb.Reader) *types.Header {
 	return ReadHeader(db, headHeaderHash, *headHeaderNumber)
 }
 
-// ReadHeadHeader returns the current canonical head block.
+// ReadHeadBlock returns the current canonical head block.
 func ReadHeadBlock(db ethdb.Reader) *types.Block {
 	headBlockHash := ReadHeadBlockHash(db)
 	if headBlockHash == (common.Hash{}) {

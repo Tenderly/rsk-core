@@ -29,9 +29,9 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/trie"
 	"github.com/tenderly/rsk-core/core/rawdb"
-	"github.com/tenderly/rsk-core/rlp"
 )
 
 // trieKV represents a trie key-value pair
@@ -322,7 +322,7 @@ func generateTrieRoot(db ethdb.KeyValueWriter, it Iterator, account common.Hash,
 						return
 					}
 					if !bytes.Equal(account.Root, subroot.Bytes()) {
-						results <- fmt.Errorf("invalid subroot(%x), want %x, got %x", it.Hash(), account.Root, subroot)
+						results <- fmt.Errorf("invalid subroot(path %x), want %x, have %x", hash, account.Root, subroot)
 						return
 					}
 					results <- nil

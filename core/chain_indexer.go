@@ -25,11 +25,11 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/tenderly/rsk-core/core/rawdb"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/tenderly/rsk-core/core/rawdb"
 )
 
 // ChainIndexerBackend defines the methods needed to process chain segments in
@@ -401,7 +401,7 @@ func (c *ChainIndexer) processSection(section uint64, lastHead common.Hash) (com
 		}
 		header := rawdb.ReadHeader(c.chainDb, hash, number)
 		if header == nil {
-			return common.Hash{}, fmt.Errorf("block #%d [%x…] not found", number, hash[:4])
+			return common.Hash{}, fmt.Errorf("block #%d [%x..] not found", number, hash[:4])
 		} else if header.ParentHash != lastHead {
 			return common.Hash{}, fmt.Errorf("chain reorged during section processing")
 		}
