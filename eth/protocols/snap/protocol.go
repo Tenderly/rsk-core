@@ -21,8 +21,8 @@ import (
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/tenderly/rsk-core/core/state/snapshot"
-	"github.com/tenderly/rsk-core/rlp"
 )
 
 // Constants to match up protocol versions and messages

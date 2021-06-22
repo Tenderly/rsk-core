@@ -20,12 +20,12 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/params"
 	"github.com/tenderly/rsk-core/consensus/ethash"
 	"github.com/tenderly/rsk-core/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/tenderly/rsk-core/core/vm"
 	"github.com/tenderly/rsk-core/crypto"
-	"github.com/ethereum/go-ethereum/params"
 )
 
 func ExampleGenerateChain() {

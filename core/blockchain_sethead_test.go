@@ -29,11 +29,11 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/params"
 	"github.com/tenderly/rsk-core/consensus/ethash"
 	"github.com/tenderly/rsk-core/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/tenderly/rsk-core/core/vm"
-	"github.com/ethereum/go-ethereum/params"
 )
 
 // rewindTest is a test case for chain rollback upon user request.
@@ -1969,7 +1969,7 @@ func testSetHead(t *testing.T, tt *rewindTest, snapshots bool) {
 
 	// Initialize a fresh chain
 	var (
-		genesis = new(Genesis).MustCommit(db)
+		genesis = (&Genesis{BaseFee: big.NewInt(params.InitialBaseFee)}).MustCommit(db)
 		engine  = ethash.NewFullFaker()
 		config  = &CacheConfig{
 			TrieCleanLimit: 256,

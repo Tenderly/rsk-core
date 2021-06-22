@@ -22,16 +22,16 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethdb/memorydb"
+	"github.com/ethereum/go-ethereum/event"
+	"github.com/ethereum/go-ethereum/trie"
 	"github.com/tenderly/rsk-core/consensus/clique"
 	"github.com/tenderly/rsk-core/core"
 	"github.com/tenderly/rsk-core/core/rawdb"
 	"github.com/tenderly/rsk-core/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/tenderly/rsk-core/core/vm"
 	"github.com/tenderly/rsk-core/eth/downloader"
-	"github.com/ethereum/go-ethereum/ethdb/memorydb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/trie"
 )
 
 type mockBackend struct {

@@ -197,7 +197,11 @@ func NewDatabaseWithFreezer(db ethdb.KeyValueStore, freezer string, namespace st
 	}
 	// Freezer is consistent with the key-value database, permit combining the two
 	if !frdb.readonly {
-		go frdb.freeze(db)
+		frdb.wg.Add(1)
+		go func() {
+			frdb.freeze(db)
+			frdb.wg.Done()
+		}()
 	}
 	return &freezerdb{
 		KeyValueStore: db,
@@ -221,7 +225,7 @@ func NewMemoryDatabaseWithCap(size int) ethdb.Database {
 // NewLevelDBDatabase creates a persistent key-value database without a freezer
 // moving immutable chain segments into cold storage.
 func NewLevelDBDatabase(file string, cache int, handles int, namespace string, readonly bool) (ethdb.Database, error) {
-	db, err := leveldb.New(file, cache, handles, namespace)
+	db, err := leveldb.New(file, cache, handles, namespace, readonly)
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +235,7 @@ func NewLevelDBDatabase(file string, cache int, handles int, namespace string, r
 // NewLevelDBDatabaseWithFreezer creates a persistent key-value database with a
 // freezer moving immutable chain segments into cold storage.
 func NewLevelDBDatabaseWithFreezer(file string, cache int, handles int, freezer string, namespace string, readonly bool) (ethdb.Database, error) {
-	kvdb, err := leveldb.New(file, cache, handles, namespace)
+	kvdb, err := leveldb.New(file, cache, handles, namespace, readonly)
 	if err != nil {
 		return nil, err
 	}
@@ -312,9 +316,8 @@ func InspectDatabase(db ethdb.Database, keyPrefix, keyStart []byte) error {
 		bloomTrieNodes stat
 
 		// Meta- and unaccounted data
-		metadata     stat
-		unaccounted  stat
-		shutdownInfo stat
+		metadata    stat
+		unaccounted stat
 
 		// Totals
 		total common.StorageSize
@@ -351,6 +354,8 @@ func InspectDatabase(db ethdb.Database, keyPrefix, keyStart []byte) error {
 			storageSnaps.Add(size)
 		case bytes.HasPrefix(key, preimagePrefix) && len(key) == (len(preimagePrefix)+common.HashLength):
 			preimages.Add(size)
+		case bytes.HasPrefix(key, configPrefix) && len(key) == (len(configPrefix)+common.HashLength):
+			metadata.Add(size)
 		case bytes.HasPrefix(key, bloomBitsPrefix) && len(key) == (len(bloomBitsPrefix)+10+common.HashLength):
 			bloomBits.Add(size)
 		case bytes.HasPrefix(key, BloomBitsIndexPrefix):
@@ -365,15 +370,13 @@ func InspectDatabase(db ethdb.Database, keyPrefix, keyStart []byte) error {
 			bytes.HasPrefix(key, []byte("bltIndex-")) ||
 			bytes.HasPrefix(key, []byte("bltRoot-")): // Bloomtrie sub
 			bloomTrieNodes.Add(size)
-		case bytes.Equal(key, uncleanShutdownKey):
-			shutdownInfo.Add(size)
 		default:
 			var accounted bool
 			for _, meta := range [][]byte{
 				databaseVersionKey, headHeaderKey, headBlockKey, headFastBlockKey, lastPivotKey,
-				fastTrieProgressKey, snapshotRootKey, snapshotJournalKey, snapshotGeneratorKey,
-				snapshotRecoveryKey, txIndexTailKey, fastTxLookupLimitKey, uncleanShutdownKey,
-				badBlockKey,
+				fastTrieProgressKey, snapshotDisabledKey, snapshotRootKey, snapshotJournalKey,
+				snapshotGeneratorKey, snapshotRecoveryKey, txIndexTailKey, fastTxLookupLimitKey,
+				uncleanShutdownKey, badBlockKey,
 			} {
 				if bytes.Equal(key, meta) {
 					metadata.Add(size)
@@ -421,7 +424,6 @@ func InspectDatabase(db ethdb.Database, keyPrefix, keyStart []byte) error {
 		{"Key-Value store", "Storage snapshot", storageSnaps.Size(), storageSnaps.Count()},
 		{"Key-Value store", "Clique snapshots", cliqueSnaps.Size(), cliqueSnaps.Count()},
 		{"Key-Value store", "Singleton metadata", metadata.Size(), metadata.Count()},
-		{"Key-Value store", "Shutdown metadata", shutdownInfo.Size(), shutdownInfo.Count()},
 		{"Ancient store", "Headers", ancientHeadersSize.String(), ancients.String()},
 		{"Ancient store", "Bodies", ancientBodiesSize.String(), ancients.String()},
 		{"Ancient store", "Receipt lists", ancientReceiptsSize.String(), ancients.String()},
