@@ -7,11 +7,11 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/btcsuite/btcutil/base58"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/tenderly/rsk-core/crypto"
+	"github.com/tenderly/rsk-core/crypto/base58"
 )
 
 var (
