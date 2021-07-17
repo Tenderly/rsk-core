@@ -29,6 +29,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/light"
@@ -39,7 +40,6 @@ import (
 	"github.com/tenderly/rsk-core/core/rawdb"
 	"github.com/tenderly/rsk-core/core/state"
 	"github.com/tenderly/rsk-core/core/state/snapshot"
-	"github.com/tenderly/rsk-core/crypto"
 	"golang.org/x/crypto/sha3"
 )
 

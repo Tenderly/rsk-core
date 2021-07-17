@@ -23,11 +23,11 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/tenderly/rsk-core/consensus/ethash"
 	"github.com/tenderly/rsk-core/core/rawdb"
-	"github.com/tenderly/rsk-core/crypto"
 	"golang.org/x/crypto/sha3"
 )
 

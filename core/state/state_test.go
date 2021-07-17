@@ -22,9 +22,9 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/tenderly/rsk-core/core/rawdb"
-	"github.com/tenderly/rsk-core/crypto"
 )
 
 type stateTest struct {

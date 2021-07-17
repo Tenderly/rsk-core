@@ -29,8 +29,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/bitutil"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
-	"github.com/tenderly/rsk-core/crypto"
 	"golang.org/x/crypto/sha3"
 )
 

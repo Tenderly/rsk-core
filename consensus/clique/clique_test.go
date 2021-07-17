@@ -22,11 +22,11 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/tenderly/rsk-core/core"
 	"github.com/tenderly/rsk-core/core/rawdb"
 	"github.com/tenderly/rsk-core/core/vm"
-	"github.com/tenderly/rsk-core/crypto"
 )
 
 // This test case is a repro of an annoying bug that took us forever to catch.

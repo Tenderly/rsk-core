@@ -31,6 +31,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
@@ -41,7 +42,6 @@ import (
 	"github.com/tenderly/rsk-core/consensus"
 	"github.com/tenderly/rsk-core/consensus/misc"
 	"github.com/tenderly/rsk-core/core/state"
-	"github.com/tenderly/rsk-core/crypto"
 	"golang.org/x/crypto/sha3"
 )
 

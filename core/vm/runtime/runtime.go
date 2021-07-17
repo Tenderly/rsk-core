@@ -22,11 +22,11 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/tenderly/rsk-core/core/rawdb"
 	"github.com/tenderly/rsk-core/core/state"
 	"github.com/tenderly/rsk-core/core/vm"
-	"github.com/tenderly/rsk-core/crypto"
 )
 
 // Config is a basic type specifying certain configuration flags for running

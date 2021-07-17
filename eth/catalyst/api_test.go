@@ -21,12 +21,12 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/node"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/tenderly/rsk-core/consensus/ethash"
 	"github.com/tenderly/rsk-core/core"
 	"github.com/tenderly/rsk-core/core/rawdb"
-	"github.com/tenderly/rsk-core/crypto"
 	"github.com/tenderly/rsk-core/eth"
 	"github.com/tenderly/rsk-core/eth/ethconfig"
 )

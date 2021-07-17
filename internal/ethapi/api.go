@@ -33,6 +33,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/p2p"
 	"github.com/ethereum/go-ethereum/params"
@@ -44,7 +45,6 @@ import (
 	"github.com/tenderly/rsk-core/core"
 	"github.com/tenderly/rsk-core/core/state"
 	"github.com/tenderly/rsk-core/core/vm"
-	"github.com/tenderly/rsk-core/crypto"
 	"github.com/tyler-smith/go-bip39"
 )
 

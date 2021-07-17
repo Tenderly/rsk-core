@@ -21,12 +21,12 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/tenderly/rsk-core/consensus"
 	"github.com/tenderly/rsk-core/consensus/misc"
 	"github.com/tenderly/rsk-core/core/state"
 	"github.com/tenderly/rsk-core/core/vm"
-	"github.com/tenderly/rsk-core/crypto"
 )
 
 // StateProcessor is a basic Processor, which takes care of transitioning

@@ -26,9 +26,9 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/tenderly/rsk-core/core/rawdb"
 	"github.com/tenderly/rsk-core/core/state"
-	"github.com/tenderly/rsk-core/crypto"
 )
 
 var dumper = spew.ConfigState{Indent: "    "}
