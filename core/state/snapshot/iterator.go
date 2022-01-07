@@ -22,8 +22,8 @@ import (
 	"sort"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/tenderly/rsk-core/core/rawdb"
 )
 
 // Iterator is an iterator to step over all the accounts or the specific

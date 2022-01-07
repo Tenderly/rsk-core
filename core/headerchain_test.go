@@ -23,12 +23,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/tenderly/rsk-core/consensus"
 	"github.com/tenderly/rsk-core/consensus/ethash"
-	"github.com/tenderly/rsk-core/core/rawdb"
 )
 
 func verifyUnbrokenCanonchain(hc *HeaderChain) error {

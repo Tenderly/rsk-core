@@ -359,7 +359,7 @@ func newFrontierInstructionSet() JumpTable {
 		},
 		SHA3: {
 			execute:     opSha3,
-			constantGas: params.Sha3Gas,
+			constantGas: params.Keccak256Gas,
 			dynamicGas:  gasSha3,
 			minStack:    minStack(2, 1),
 			maxStack:    maxStack(2, 1),

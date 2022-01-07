@@ -22,9 +22,9 @@ import (
 	"os"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/log"
 	bloomfilter "github.com/holiman/bloomfilter/v2"
-	"github.com/tenderly/rsk-core/core/rawdb"
 )
 
 // stateBloomHasher is a wrapper around a byte blob to satisfy the interface API

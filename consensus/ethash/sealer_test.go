@@ -28,8 +28,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/tenderly/rsk-core/internal/testlog"
 )
 
 // Tests whether remote HTTP servers are correctly notified of new work.
@@ -96,7 +94,6 @@ func TestRemoteNotifyFull(t *testing.T) {
 	config := Config{
 		PowMode:    ModeTest,
 		NotifyFull: true,
-		Log:        testlog.Logger(t, log.LvlWarn),
 	}
 	ethash := New(config, []string{server.URL}, false)
 	defer ethash.Close()
@@ -139,7 +136,6 @@ func TestRemoteMultiNotify(t *testing.T) {
 
 	// Create the custom ethash engine.
 	ethash := NewTester([]string{server.URL}, false)
-	ethash.config.Log = testlog.Logger(t, log.LvlWarn)
 	defer ethash.Close()
 
 	// Provide a results reader.
@@ -186,7 +182,6 @@ func TestRemoteMultiNotifyFull(t *testing.T) {
 	config := Config{
 		PowMode:    ModeTest,
 		NotifyFull: true,
-		Log:        testlog.Logger(t, log.LvlWarn),
 	}
 	ethash := New(config, []string{server.URL}, false)
 	defer ethash.Close()
