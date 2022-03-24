@@ -172,7 +172,7 @@ func NewEVM(blockCtx BlockContext, txCtx TxContext, statedb StateDB, chainConfig
 		StateDB:      statedb,
 		Config:       config,
 		chainConfig:  chainConfig,
-		chainRules:   chainConfig.Rules(blockCtx.BlockNumber),
+		chainRules:   chainConfig.Rules(blockCtx.BlockNumber, false),
 		interpreters: make([]Interpreter, 0, 1),
 	}
 
